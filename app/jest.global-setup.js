@@ -21,4 +21,12 @@
 // out of test output.
 require('@expo/env').load(__dirname, { silent: true });
 
+// `.env` itself is untracked and gitignored, so on a fresh checkout (or CI)
+// the `@expo/env` load above is a no-op and this var stays `undefined`,
+// which is exactly what the invariant check above rejects. Default it to
+// the empty string so the test is self-contained regardless of whether a
+// local `.env` happens to exist — matching, not merely hoping to match,
+// the "defined, if empty" value the real app sees.
+process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID ??= '';
+
 module.exports = async () => {};
