@@ -1,17 +1,18 @@
-import { View, Text, Button, Alert } from 'react-native';
+import { View, Text, Button } from 'react-native';
 import { signInWithApple } from '../firebase/appleAuth';
 import { useGoogleSignIn } from '../hooks/useGoogleSignIn';
+import { showAlert } from '../utils/alert';
 
 export function SignInScreen() {
   const { promptAsync, isReady } = useGoogleSignIn((error) =>
-    Alert.alert('Sign-in failed', error.message)
+    showAlert('Sign-in failed', error.message)
   );
 
   const handleApplePress = async () => {
     try {
       await signInWithApple();
     } catch (error) {
-      Alert.alert('Sign-in failed', (error as Error).message);
+      showAlert('Sign-in failed', (error as Error).message);
     }
   };
 
