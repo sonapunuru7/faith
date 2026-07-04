@@ -6,8 +6,13 @@ import { signInWithGoogleIdToken } from '../firebase/googleAuth';
 WebBrowser.maybeCompleteAuthSession();
 
 export function useGoogleSignIn(onError: (error: Error) => void) {
+  const isConfigured = !!process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID;
+
+  // expo-auth-session throws if its clientId is undefined, so a missing env
+  // var gets an empty-string fallback here — `isConfigured` (not `request`)
+  // is what gates readiness, so an unconfigured client ID never prompts.
   const [request, response, promptAsync] = Google.useAuthRequest({
-    clientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID,
+    clientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID ?? '',
   });
 
   useEffect(() => {
@@ -18,5 +23,5 @@ export function useGoogleSignIn(onError: (error: Error) => void) {
     }
   }, [response]);
 
-  return { promptAsync: () => promptAsync(), isReady: !!request };
+  return { promptAsync: () => promptAsync(), isReady: isConfigured && !!request };
 }
