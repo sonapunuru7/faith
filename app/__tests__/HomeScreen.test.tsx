@@ -128,6 +128,15 @@ describe('HomeScreen', () => {
     );
   });
 
+  test('renders the sheep mascot and streak calendar during the initial loading state', () => {
+    (fetchDailyVerseDoc as jest.Mock).mockReturnValue(new Promise(() => {})); // never resolves — stays loading
+
+    render(<HomeScreen />);
+
+    expect(screen.getByTestId('sheep-mascot')).toBeTruthy();
+    expect(screen.getByTestId('streak-calendar')).toBeTruthy();
+  });
+
   test('renders the sheep mascot and streak calendar even when no verse is set for today', async () => {
     (fetchDailyVerseDoc as jest.Mock).mockResolvedValue(null);
 

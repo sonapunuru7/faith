@@ -77,20 +77,13 @@ export function HomeScreen() {
     }
   };
 
-  if (status === 'loading') {
-    return (
-      <View>
-        <Text>Welcome to Faith</Text>
-        <ActivityIndicator />
-      </View>
-    );
-  }
-
   const now = new Date();
 
   return (
     <ScrollView>
       <Text>Welcome to Faith</Text>
+
+      {status === 'loading' && <ActivityIndicator />}
 
       {status === 'no-verse' && (
         <Text>Today's verse isn't available yet — check back soon.</Text>
