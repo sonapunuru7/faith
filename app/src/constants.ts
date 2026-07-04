@@ -1,0 +1,3 @@
+export const DEFAULT_TRANSLATION = 'KJV';
+export const DEFAULT_REMINDER_HOUR = 8;
+export const DEFAULT_REMINDER_MINUTE = 0;
