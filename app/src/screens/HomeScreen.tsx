@@ -43,7 +43,7 @@ export function HomeScreen() {
         setStatus('ready');
 
         if (uid) {
-          await markVerseViewed(uid, date);
+          markVerseViewed(uid, date).catch(() => {});
         }
       } catch (error) {
         setStatus('error');

@@ -47,6 +47,22 @@ describe('HomeScreen', () => {
     await waitFor(() => expect(markVerseViewed).toHaveBeenCalledWith('alice', expect.any(String)));
   });
 
+  test('still shows the loaded verse when marking it viewed fails', async () => {
+    (fetchDailyVerseDoc as jest.Mock).mockResolvedValue({
+      reference: 'Philippians 4:6-7',
+      journalPrompts: ['Where did you see this today?'],
+    });
+    (fetchVerseText as jest.Mock).mockResolvedValue('Do not be anxious about anything...');
+    (markVerseViewed as jest.Mock).mockRejectedValue(new Error('network blip'));
+
+    render(<HomeScreen />);
+
+    expect(await screen.findByText('Philippians 4:6-7')).toBeTruthy();
+    expect(await screen.findByText('Do not be anxious about anything...')).toBeTruthy();
+    expect(await screen.findByText('Where did you see this today?')).toBeTruthy();
+    expect(screen.queryByText(/something went wrong/i)).toBeNull();
+  });
+
   test('shows a fallback message when no verse is set for today', async () => {
     (fetchDailyVerseDoc as jest.Mock).mockResolvedValue(null);
 
