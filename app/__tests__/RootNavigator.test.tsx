@@ -17,6 +17,21 @@ jest.mock('../src/notifications/dailyReminder', () => ({
   scheduleDailyReminder: jest.fn().mockResolvedValue(undefined),
 }));
 
+jest.mock('../src/firebase/userProfile', () => ({
+  fetchWellnessState: jest.fn().mockResolvedValue({
+    currentStreak: 0,
+    longestStreak: 0,
+    missedDaysInARow: 0,
+    wellnessScore: 50,
+    lastEngagedDate: '',
+  }),
+  saveWellnessState: jest.fn().mockResolvedValue(undefined),
+}));
+
+jest.mock('../src/firebase/engagementCalendar', () => ({
+  fetchEngagedDatesInMonth: jest.fn().mockResolvedValue(new Set()),
+}));
+
 import { render, screen } from '@testing-library/react-native';
 import { onAuthStateChanged } from 'firebase/auth';
 import { RootNavigator } from '../src/navigation/RootNavigator';
