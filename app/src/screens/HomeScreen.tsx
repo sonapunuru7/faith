@@ -34,11 +34,7 @@ export function HomeScreen() {
         setReference(dailyVerse.reference);
         setPrompts(dailyVerse.journalPrompts);
 
-        const text = await fetchVerseText(
-          dailyVerse.reference,
-          DEFAULT_TRANSLATION,
-          process.env.EXPO_PUBLIC_BIBLE_API_KEY ?? ''
-        );
+        const text = await fetchVerseText(dailyVerse.reference, DEFAULT_TRANSLATION);
         setVerseText(text);
         setStatus('ready');
 

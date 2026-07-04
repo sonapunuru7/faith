@@ -9,37 +9,34 @@ describe('fetchVerseText', () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
       json: async () => ({
-        data: { passages: [{ content: 'For God so loved the world...' }] },
+        reference: 'John 3:16',
+        text: 'For God so loved the world...\n',
+        translation_id: 'kjv',
       }),
     });
 
-    const text = await fetchVerseText('John 3:16', 'KJV', 'test-key');
+    const text = await fetchVerseText('John 3:16', 'KJV');
 
     expect(text).toBe('For God so loved the world...');
+    expect(global.fetch).toHaveBeenCalledWith('https://bible-api.com/John%203%3A16?translation=kjv');
   });
 
   test('throws BibleApiError for an unsupported translation', async () => {
-    await expect(fetchVerseText('John 3:16', 'MSG', 'test-key')).rejects.toThrow(
-      BibleApiError
-    );
+    await expect(fetchVerseText('John 3:16', 'MSG')).rejects.toThrow(BibleApiError);
   });
 
   test('throws BibleApiError when the API responds with an error status', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({ ok: false, status: 500 });
 
-    await expect(fetchVerseText('John 3:16', 'KJV', 'test-key')).rejects.toThrow(
-      BibleApiError
-    );
+    await expect(fetchVerseText('John 3:16', 'KJV')).rejects.toThrow(BibleApiError);
   });
 
   test('throws BibleApiError when no passage is found', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
-      json: async () => ({ data: { passages: [] } }),
+      json: async () => ({ text: '' }),
     });
 
-    await expect(
-      fetchVerseText('Nonexistent 1:1', 'KJV', 'test-key')
-    ).rejects.toThrow(BibleApiError);
+    await expect(fetchVerseText('Nonexistent 1:1', 'KJV')).rejects.toThrow(BibleApiError);
   });
 });
