@@ -11,13 +11,23 @@ export function useGoogleSignIn(onError: (error: Error) => void) {
   // expo-auth-session throws if its clientId is undefined, so a missing env
   // var gets an empty-string fallback here — `isConfigured` (not `request`)
   // is what gates readiness, so an unconfigured client ID never prompts.
-  const [request, response, promptAsync] = Google.useAuthRequest({
+  //
+  // useIdTokenAuthRequest (not the generic useAuthRequest) is required to get
+  // an ID token at all on web: useAuthRequest defaults to response_type=token
+  // there, which returns only an access token. Even with the ID-token flow,
+  // expo-auth-session's AuthRequest.ts only populates `authentication` when
+  // `params.access_token` is present — the web implicit id-token flow never
+  // sets that, so the token only shows up in `response.params.id_token`.
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID ?? '',
   });
 
   useEffect(() => {
-    if (response?.type === 'success' && response.authentication?.idToken) {
-      signInWithGoogleIdToken(response.authentication.idToken).catch(onError);
+    if (response?.type === 'success') {
+      const idToken = response.authentication?.idToken ?? response.params?.id_token;
+      if (idToken) {
+        signInWithGoogleIdToken(idToken).catch(onError);
+      }
     } else if (response?.type === 'error') {
       onError(new Error('Google sign-in failed'));
     }
