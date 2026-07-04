@@ -2,7 +2,20 @@ jest.mock('firebase/auth', () => ({
   onAuthStateChanged: jest.fn(),
 }));
 
-jest.mock('../src/firebase/config', () => ({ auth: {} }));
+jest.mock('../src/firebase/config', () => ({ auth: { currentUser: { uid: 'alice' } } }));
+
+jest.mock('../src/firebase/dailyVerse', () => ({
+  fetchDailyVerseDoc: jest.fn().mockResolvedValue(null),
+}));
+
+jest.mock('../src/firebase/engagement', () => ({
+  markVerseViewed: jest.fn().mockResolvedValue(undefined),
+  saveJournalAnswers: jest.fn().mockResolvedValue(undefined),
+}));
+
+jest.mock('../src/notifications/dailyReminder', () => ({
+  scheduleDailyReminder: jest.fn().mockResolvedValue(undefined),
+}));
 
 import { render, screen } from '@testing-library/react-native';
 import { onAuthStateChanged } from 'firebase/auth';
